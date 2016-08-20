@@ -195,7 +195,10 @@ struct _drm_intel_bo_gem {
 	uint32_t swizzle_mode;
 	unsigned long stride;
 
+	unsigned long kflags;
+
 	time_t free_time;
+
 
 	/** Array passed to the DRM containing relocation information. */
 	struct drm_i915_gem_relocation_entry *relocs;
@@ -575,12 +578,11 @@ drm_intel_add_validate_buffer2(drm_intel_bo *bo, int need_fence)
 	bufmgr_gem->exec2_objects[index].relocation_count = bo_gem->reloc_count;
 	bufmgr_gem->exec2_objects[index].relocs_ptr = (uintptr_t)bo_gem->relocs;
 	bufmgr_gem->exec2_objects[index].alignment = bo->align;
-	bufmgr_gem->exec2_objects[index].offset = bo_gem->is_softpin ?
-		bo->offset64 : 0;
-	bufmgr_gem->exec_bos[index] = bo;
-	bufmgr_gem->exec2_objects[index].flags = flags;
+	bufmgr_gem->exec2_objects[index].offset = bo->offset64;
+	bufmgr_gem->exec2_objects[index].flags = flags | bo_gem->kflags;
 	bufmgr_gem->exec2_objects[index].rsvd1 = 0;
 	bufmgr_gem->exec2_objects[index].rsvd2 = 0;
+	bufmgr_gem->exec_bos[index] = bo;
 	bufmgr_gem->exec_count++;
 }
 
@@ -1368,6 +1370,7 @@ drm_intel_gem_bo_unreference_final(drm_intel_bo *bo, time_t time)
 	for (i = 0; i < bo_gem->softpin_target_count; i++)
 		drm_intel_gem_bo_unreference_locked_timed(bo_gem->softpin_target[i],
 								  time);
+	bo_gem->kflags = 0;
 	bo_gem->reloc_count = 0;
 	bo_gem->used_as_reloc_target = false;
 	bo_gem->softpin_target_count = 0;
@@ -2762,6 +2765,27 @@ drm_intel_bufmgr_gem_enable_reuse(drm_intel_bufmgr *bufmgr)
 	drm_intel_bufmgr_gem *bufmgr_gem = (drm_intel_bufmgr_gem *) bufmgr;
 
 	bufmgr_gem->bo_reuse = true;
+}
+
+/**
+ * Disables implicit synchronisation before executing the bo
+ *
+ * This will cause rendering corruption unless you correctly manage explicit
+ * fences for all rendering involving this buffer - including use by others.
+ * Disabling the implicit serialisation is only required if that serialisation
+ * is too coarse (for example, you have split the buffer into many
+ * non-overlapping regions and are sharing the whole buffer between concurrent
+ * independent command streams).
+ *
+ * Note the kernel must advertise support via I915_PARAM_HAS_EXEC_ASYNC or
+ * subsequent execbufs involving the bo will generate EINVAL.
+ */
+void
+drm_intel_gem_bo_disable_implicit_sync(drm_intel_bo *bo)
+{
+	drm_intel_bo_gem *bo_gem = (drm_intel_bo_gem *) bo;
+
+	bo_gem->kflags |= EXEC_OBJECT_ASYNC;
 }
 
 /**
