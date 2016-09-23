@@ -51,6 +51,7 @@ libdrm/config.h.in
 libdrm.pc
 libdrm-uninstalled.pc
 libdrm_intel.pc
+libdrm_intel-uninstalled.pc
 libdrm_nouveau.pc
 libdrm_radeon.pc
 libdrm_omap.pc

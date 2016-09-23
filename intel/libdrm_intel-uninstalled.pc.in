@@ -1,0 +1,9 @@
+srcdir=@abs_srcdir@
+top_srcdir=@abs_top_srcdir@
+
+Name: libdrm_intel
+Description: Userspace interface to intel kernel DRM services
+Version: @PACKAGE_VERSION@
+Requires: libdrm
+Libs: -L${srcdir} -ldrm_intel
+Cflags: -I${top_srcdir}/include -I${top_srcdir}/include/drm -I${srcdir}

@@ -521,6 +521,7 @@ AC_CONFIG_FILES([
 	libkms/libkms.pc
 	intel/Makefile
 	intel/libdrm_intel.pc
+	intel/libdrm_intel-uninstalled.pc
 	radeon/Makefile
 	radeon/libdrm_radeon.pc
 	amdgpu/Makefile
