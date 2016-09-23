@@ -1,0 +1,8 @@
+srcdir=@abs_srcdir@
+top_srcdir=@abs_top_srcdir@
+
+Name: libdrm
+Description: Userspace interface to kernel DRM services
+Version: @PACKAGE_VERSION@
+Libs: -L${srcdir} -ldrm
+Cflags: -I${srcdir} -I${srcdir}/include -I${srcdir}/include/drm

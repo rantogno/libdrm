@@ -554,7 +554,9 @@ AC_CONFIG_FILES([
 	tests/etnaviv/Makefile
 	tests/util/Makefile
 	man/Makefile
-	libdrm.pc])
+	libdrm.pc
+	libdrm-uninstalled.pc
+        ])
 AC_OUTPUT
 
 echo ""

@@ -49,6 +49,7 @@ i915.kld
 install-sh
 libdrm/config.h.in
 libdrm.pc
+libdrm-uninstalled.pc
 libdrm_intel.pc
 libdrm_nouveau.pc
 libdrm_radeon.pc
