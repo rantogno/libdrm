@@ -2432,11 +2432,11 @@ do_exec2(drm_intel_bo *bo, int used, drm_intel_context *ctx,
 		i915_execbuffer2_set_context_id(execbuf, ctx->ctx_id);
 	if (in_fence != -1) {
 		execbuf.rsvd2 = in_fence;
-		flags |= I915_EXEC_FENCE_IN;
+		execbuf.flags |= I915_EXEC_FENCE_IN;
 	}
 	if (out_fence != NULL) {
 		*out_fence = -1;
-		flags |= I915_EXEC_FENCE_OUT;
+		execbuf.flags |= I915_EXEC_FENCE_OUT;
 	}
 
 	if (bufmgr_gem->no_exec)
